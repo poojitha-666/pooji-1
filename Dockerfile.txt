@@ -1,0 +1,36 @@
+# 1.1 - Use Ubuntu base image
+FROM ubuntu:24.10
+LABEL maintainer="sanradiancetraining"
+
+# 1.3 - Accept environment variable for MySQL root password
+ARG MYSQL_ROOT_PASSWORD
+ENV MYSQL_ROOT_PASSWORD=rootpassword
+
+# Avoid interactive prompts during install
+ENV DEBIAN_FRONTEND=noninteractive
+
+# 1.2 - Install MySQL Server
+RUN apt-get update && \
+    apt-get install -y mysql-server && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Expose MySQL default port
+EXPOSE 3306
+#copy the custom entrypoint script
+#COPY docker-entrypoint.sh /usr/local/bin/
+#RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+#start MYSQL on container run
+#CMD ["/usr/local/bin/docker-entrypoint.sh"]
+
+#!/bin/bash
+
+#start MYSQL service
+service mysql start
+
+#keep the container running
+tail -f /dev/null
+
+# 1.2 - Start MySQL on container start
+#CMD ["sh", "-c", "mysqld_safe --datadir=/var/lib/mysql"]
